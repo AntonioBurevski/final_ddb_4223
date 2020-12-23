@@ -1,0 +1,46 @@
+--5. TRIGGER--
+DELIMITER $$
+
+DROP TRIGGER IF EXISTS packetInsert$$
+
+CREATE 
+	DEFINER = 'root'@'localhost'
+TRIGGER packetInsert
+  AFTER INSERT 
+  ON packet
+  FOR EACH ROW
+
+BEGIN
+  DECLARE p int(11);
+SELECT 
+  price INTO p
+FROM packet_price 
+WHERE id_packet_Price = NEW.fk_packet_Price;
+
+INSERT INTO stat
+SET Desc_stat = CONCAT('Inserted Packet with ', new.fk_packet_Price, p),
+    Date_stat = NOW(); END
+
+$$
+
+
+DELIMITER ;
+
+
+--6. PROCEDURE--
+CREATE DEFINER = 'root'@'localhost'
+PROCEDURE procc(IN packet_Id INTEGER)
+BEGIN
+SELECT
+  packet_Id, status
+FROM packet
+  INNER JOIN delivery
+    ON packet.idpacket = delivery.fk_packet
+  INNER JOIN status_delivery
+    ON delivery.fk_status = status_delivery.id_status
+WHERE packet.id_packet = packet_Id; END
+$$
+DELIMITER ;
+
+
+CALL procc(3);

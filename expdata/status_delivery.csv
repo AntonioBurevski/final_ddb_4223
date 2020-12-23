@@ -1,0 +1,6 @@
+id_status,status
+1,Packet preparation
+2,Packet in Transit
+3,Delivery Completed
+4,Cancelled
+5,UnKnown
